@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag and Drop Sorting Game</title>
+    <style>
+        #number-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .number-box {
+            width: 50px;
+            height: 50px;
+            background-color: lightblue;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            border: 2px solid darkblue;
+            cursor: pointer;
+            user-select: none;
+        }
+        button {
+            margin-top: 20px;
+        }
+        select {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Number sorting game (in place)</h1>
+
+<label for="number-count">Select number of elements: </label>
+<select id="number-count">
+    <option value="4">4</option>
+    <option value="8">8</option>
+     <option value="12">12</option>
+    <option value="16">16</option>
+    <option value="20">20</option>
+
+</select>
+
+<div id="number-container"></div>
+
+<button onclick="resetGame()">Reset</button>
+<p id="timer">Time: 0s</p>
+
+<script>
+    let numbers = [];
+    let startTime;
+    let timerInterval;
+
+    function getRandomNumbers(count) {
+        const arr = [];
+        while (arr.length < count) {
+            const num = Math.floor(Math.random() * 1001); // Numbers between 0 and 1000
+            if (!arr.includes(num)) {
+                arr.push(num);
+            }
+        }
+        return arr;
+    }
+
+    function initializeNumbers() {
+        const container = document.getElementById('number-container');
+        container.innerHTML = '';
+        numbers.forEach((num, index) => {
+            const div = document.createElement('div');
+            div.className = 'number-box';
+            div.textContent = num;
+            div.setAttribute('draggable', 'true');
+            div.setAttribute('data-index', index);
+            div.addEventListener('dragstart', handleDragStart);
+            div.addEventListener('dragover', handleDragOver);
+            div.addEventListener('drop', handleDrop);
+            container.appendChild(div);
+        });
+    }
+
+    function handleDragStart(e) {
+        e.dataTransfer.setData('text/plain', e.target.getAttribute('data-index'));
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+    }
+
+    function handleDrop(e) {
+        const fromIndex = e.dataTransfer.getData('text/plain');
+        const toIndex = e.target.getAttribute('data-index');
+
+        if (fromIndex !== toIndex) {
+            swapNumbers(fromIndex, toIndex);
+            initializeNumbers();
+            checkIfSorted();
+        }
+    }
+
+    function swapNumbers(fromIndex, toIndex) {
+        const temp = numbers[fromIndex];
+        numbers[fromIndex] = numbers[toIndex];
+        numbers[toIndex] = temp;
+    }
+
+    function checkIfSorted() {
+        if (numbers.every((num, i, arr) => !i || arr[i - 1] <= num)) {
+            clearInterval(timerInterval);
+            alert(`Congratulations! You sorted the numbers in ${(Date.now() - startTime) / 1000} seconds.`);
+        }
+    }
+
+    function resetGame() {
+        const count = parseInt(document.getElementById('number-count').value, 10);
+        numbers = getRandomNumbers(count);
+        initializeNumbers();
+        startTimer();
+    }
+
+    function startTimer() {
+        clearInterval(timerInterval);
+        startTime = Date.now();
+        document.getElementById('timer').textContent = 'Time: 0s';
+        timerInterval = setInterval(() => {
+            const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+            document.getElementById('timer').textContent = `Time: ${elapsed}s`;
+        }, 100);
+    }
+
+    // Initialize game on page load
+    resetGame();
+</script>
+
+</body>
+</html>

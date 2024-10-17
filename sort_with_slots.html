@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Sorting Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #container {
+            margin-top: 20px;
+        }
+        .slots {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .slot {
+            width: 50px;
+            height: 50px;
+            border: 2px solid black;
+            margin: 5px;
+            line-height: 50px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            user-select: none;
+        }
+        .green-slot {
+            background-color: lightgreen;
+        }
+        .blue-slot {
+            background-color: lightblue;
+        }
+        .draggable {
+            cursor: grab;
+        }
+        #controls {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Number Sorting Game</h1>
+<div>
+    <label for="numberCount">Select number of items: </label>
+    <select id="numberCount">
+        <option value="4">4</option>
+        <option value="8">8</option>
+        <option value="16">16</option>
+        <option value="20">20</option>
+        <option value="32">32</option>
+    </select>
+    <button id="resetButton">Initialize Numbers</button>
+</div>
+
+<div id="container">
+    <div id="greenSlots" class="slots"></div>
+    <div id="blueSlots" class="slots"></div>
+</div>
+
+<div id="controls">
+    <p>Time: <span id="timer">0</span> seconds</p>
+</div>
+
+<script>
+    let timerInterval;
+    let startTime;
+
+    document.getElementById('resetButton').addEventListener('click', initializeGame);
+
+    function initializeGame() {
+        const count = parseInt(document.getElementById('numberCount').value);
+        const numbers = generateRandomNumbers(count);
+
+        // Clear existing slots
+        const greenSlots = document.getElementById('greenSlots');
+        const blueSlots = document.getElementById('blueSlots');
+        greenSlots.innerHTML = '';
+        blueSlots.innerHTML = '';
+
+        // Create green slots with numbers
+        for (let i = 0; i < count; i++) {
+            const greenSlot = createSlot(numbers[i], 'green-slot');
+            greenSlots.appendChild(greenSlot);
+        }
+
+        // Create blue slots (empty)
+        for (let i = 0; i < count; i++) {
+            const blueSlot = createSlot('', 'blue-slot');
+            blueSlots.appendChild(blueSlot);
+        }
+
+        // Start the timer
+        startTimer();
+    }
+
+    function generateRandomNumbers(count) {
+        const numbers = [];
+        for (let i = 0; i < count; i++) {
+            numbers.push(Math.floor(Math.random() * 1000));
+        }
+        return numbers;
+    }
+
+    function createSlot(content, className) {
+        const slot = document.createElement('div');
+        slot.classList.add('slot', className);
+        if (content !== '') {
+            slot.classList.add('draggable');
+            slot.setAttribute('draggable', true);
+        }
+        slot.textContent = content;
+
+        // Drag events
+        slot.addEventListener('dragstart', dragStart);
+        slot.addEventListener('dragover', dragOver);
+        slot.addEventListener('drop', drop);
+
+        return slot;
+    }
+
+    function dragStart(e) {
+        e.dataTransfer.setData('text/plain', e.target.textContent);
+        e.target.classList.add('dragging');
+    }
+
+    function dragOver(e) {
+        e.preventDefault();
+        e.target.classList.add('drag-over');
+    }
+
+    function drop(e) {
+        e.preventDefault();
+        const draggedNumber = e.dataTransfer.getData('text/plain');
+        const targetNumber = e.target.textContent;
+
+        if (draggedNumber && e.target.classList.contains('slot')) {
+            // Swap numbers between the slots
+            e.target.textContent = draggedNumber;
+            const draggedElement = document.querySelector('.dragging');
+            draggedElement.textContent = targetNumber;
+
+            // Update draggable attributes
+            if (e.target.textContent === '') {
+                e.target.removeAttribute('draggable');
+                e.target.classList.remove('draggable');
+            } else {
+                e.target.setAttribute('draggable', true);
+                e.target.classList.add('draggable');
+            }
+
+            if (draggedElement.textContent === '') {
+                draggedElement.removeAttribute('draggable');
+                draggedElement.classList.remove('draggable');
+            } else {
+                draggedElement.setAttribute('draggable', true);
+                draggedElement.classList.add('draggable');
+            }
+
+            // Check if sorted in blue slots
+            checkIfSorted();
+        }
+
+        e.target.classList.remove('drag-over');
+        document.querySelector('.dragging').classList.remove('dragging');
+    }
+
+    function checkIfSorted() {
+        const blueSlots = document.querySelectorAll('.blue-slot');
+        const numbers = Array.from(blueSlots).map(slot => parseInt(slot.textContent) || null);
+
+        // Check if all slots are filled
+        if (numbers.includes(null)) {
+            return;
+        }
+
+        // Check if the numbers are sorted in ascending order
+        if (numbers.every((num, i) => i === 0 || num >= numbers[i - 1])) {
+            clearInterval(timerInterval);
+            alert('Congratulations! The numbers in the blue slots are sorted.');
+        }
+    }
+
+    function startTimer() {
+        clearInterval(timerInterval);
+        startTime = Date.now();
+        timerInterval = setInterval(() => {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            document.getElementById('timer').textContent = elapsed;
+        }, 1000);
+    }
+</script>
+
+</body>
+</html>

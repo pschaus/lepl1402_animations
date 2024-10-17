@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Finding Game</title>
+    <style>
+        #number-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .number-box {
+            width: 60px;
+            height: 60px;
+            background-color: lightgray;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            border: 2px solid darkgray;
+            cursor: pointer;
+            user-select: none;
+        }
+        .hidden {
+            background-color: lightblue;
+            color: transparent;
+        }
+        button, select {
+            margin-top: 20px;
+        }
+        #target-message {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Find the Hidden Number</h1>
+
+<label for="number-count">Select size of series: </label>
+<select id="number-count">
+    <option value="2">2</option>
+    <option value="4">4</option>
+    <option value="8">8</option>
+    <option value="16">16</option>
+    <option value="32">32</option>
+    <option value="128">128</option>
+    <option value="256">256</option>
+</select>
+
+<div id="number-container"></div>
+
+<p id="target-message"></p>
+<p>Click counter: <span id="click-counter">0</span></p>
+<button onclick="resetGame()">Reset</button>
+
+<script>
+    let numbers = [];
+    let targetNumber;
+    let clickCounter = 0;
+
+    function getRandomNumbers(count) {
+        const arr = [];
+        while (arr.length < count) {
+            const num = Math.floor(Math.random() * 1001); // Numbers between 0 and 1000
+            if (!arr.includes(num)) {
+                arr.push(num);
+            }
+        }
+        arr.sort((a, b) => a - b); // Sort numbers
+        return arr;
+    }
+
+    function initializeNumbers() {
+        const container = document.getElementById('number-container');
+        container.innerHTML = '';
+        numbers.forEach((num, index) => {
+            const div = document.createElement('div');
+            div.className = 'number-box hidden';
+            div.setAttribute('data-index', index);
+            div.textContent = num;
+            div.addEventListener('click', revealNumber);
+            container.appendChild(div);
+        });
+    }
+
+    function revealNumber(e) {
+        const clickedIndex = e.target.getAttribute('data-index');
+        const clickedNumber = numbers[clickedIndex];
+        
+        // Reveal the number
+        e.target.classList.remove('hidden');
+        e.target.textContent = clickedNumber;
+
+        // Increment the click counter
+        clickCounter++;
+        document.getElementById('click-counter').textContent = clickCounter;
+
+        // Check if the clicked number is the target number
+        if (clickedNumber == targetNumber) {
+            alert(`Congratulations! You found the number ${targetNumber} in ${clickCounter} clicks.`);
+        }
+    }
+
+    function resetGame() {
+        clickCounter = 0;
+        document.getElementById('click-counter').textContent = clickCounter;
+
+        const count = parseInt(document.getElementById('number-count').value, 10);
+        numbers = getRandomNumbers(count);
+
+        // Pick a random target number from the array
+        const targetIndex = Math.floor(Math.random() * count);
+        targetNumber = numbers[targetIndex];
+
+        document.getElementById('target-message').textContent = `Find the number: ${targetNumber}`;
+        initializeNumbers();
+    }
+
+    // Initialize game on page load
+    resetGame();
+</script>
+
+</body>
+</html>
