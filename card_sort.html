@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Sorting Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .cell {
+            width: 40px;
+            height: 40px;
+            display: inline-block;
+            border: 1px solid black;
+            margin: 5px;
+            line-height: 40px;
+            text-align: center;
+            font-size: 18px;
+        }
+        button {
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Number Sorting Game</h1>
+
+<div>
+    <label for="numberCount">Select number of items: </label>
+    <select id="numberCount">
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+    </select>
+    <button onclick="resetGame()">Reset</button>
+</div>
+
+<div class="container" id="numberContainer"></div>
+
+<div>
+    <button onclick="swap()">Swap First Two</button>
+    <button onclick="moveTopToEnd()">Move Top to End</button>
+</div>
+
+<p>Time: <span id="timer">0</span> seconds</p>
+
+<script>
+    let numbers = [];
+    let startTime;
+    let timerInterval;
+
+    // Initialize the game with the selected number of items
+    function initializeGame() {
+        const numberCount = parseInt(document.getElementById('numberCount').value);
+        numbers = generateRandomNumbers(numberCount);
+        renderNumbers();
+        startTimer();
+    }
+
+    // Generate an array of random numbers
+    function generateRandomNumbers(count) {
+        const arr = Array.from({ length: count }, (_, i) => i + 1);
+        return arr.sort(() => Math.random() - 0.5);  // Shuffle the array
+    }
+
+    // Render the numbers in the container
+    function renderNumbers() {
+        const container = document.getElementById('numberContainer');
+        container.innerHTML = '';
+        numbers.forEach(number => {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.textContent = number;
+            container.appendChild(cell);
+        });
+        checkIfSorted();
+    }
+
+    // Swap the first two numbers in the array
+    function swap() {
+        if (numbers.length >= 2) {
+            [numbers[0], numbers[1]] = [numbers[1], numbers[0]];
+            renderNumbers();
+        }
+    }
+
+    // Move the first number to the end of the array and left-shift others
+    function moveTopToEnd() {
+        const firstNumber = numbers.shift();
+        numbers.push(firstNumber);
+        renderNumbers();
+    }
+
+    // Check if the numbers are sorted
+    function checkIfSorted() {
+        const sorted = numbers.every((val, index, arr) => index === 0 || arr[index - 1] <= val);
+        if (sorted) {
+            clearInterval(timerInterval);
+            alert('Congratulations! The numbers are sorted.');
+        }
+    }
+
+    // Start the timer
+    function startTimer() {
+        clearInterval(timerInterval);
+        startTime = Date.now();
+        timerInterval = setInterval(() => {
+            const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+            document.getElementById('timer').textContent = elapsedTime;
+        }, 1000);
+    }
+
+    // Reset the game
+    function resetGame() {
+        initializeGame();
+    }
+
+    // Initialize the game on page load
+    window.onload = initializeGame;
+
+    // Re-initialize the game when the dropdown changes
+    document.getElementById('numberCount').addEventListener('change', resetGame);
+</script>
+
+</body>
+</html>
