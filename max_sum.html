@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maximum Sum Subarray Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .array-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px;
+        }
+        .cell {
+            width: 40px;
+            height: 40px;
+            border: 1px solid black;
+            margin: 2px;
+            line-height: 40px;
+            text-align: center;
+            font-size: 16px;
+        }
+        .green {
+            background-color: lightgreen;
+        }
+        .blue {
+            background-color: lightblue;
+        }
+        .bold {
+            font-weight: bold;
+        }
+        button {
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Maximum Sum Subarray Visualization</h1>
+
+<div>
+    <label for="arraySize">Array Size: </label>
+    <select id="arraySize">
+        <!-- Dropdown options from 4 to 20 -->
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+    </select>
+    <button onclick="regenerateArray()">Regenerate</button>
+</div>
+
+<h3>Current Subarray (in blue)</h3>
+<div class="array-container" id="currentArrayContainer"></div>
+
+<h3>Max Sum Subarray (in green)</h3>
+<div class="array-container" id="maxArrayContainer"></div>
+
+<div>
+    <p>Current Sum: <span id="currentSumDisplay">0</span></p>
+    <p>Max Sum: <span id="maxSumDisplay">0</span></p>
+</div>
+
+<div>
+    <button onclick="step()">Step</button>
+</div>
+
+<p id="status"></p>
+
+<script>
+    let array = [];
+    let currentIndex = 1;
+    let currentSum = 0;
+    let maxSum = Number.MIN_SAFE_INTEGER;
+    let start = 0;
+    let end = 1;
+    let bestStart = 0;
+    let bestEnd = 0;
+
+    function generateRandomArray(size) {
+        return Array.from({ length: size }, () => Math.floor(Math.random() * 41) - 20); // Random numbers between -20 and 20
+    }
+
+    function renderArray() {
+        const currentContainer = document.getElementById('currentArrayContainer');
+        const maxContainer = document.getElementById('maxArrayContainer');
+        currentContainer.innerHTML = '';
+        maxContainer.innerHTML = '';
+
+        array.forEach((value, index) => {
+            const currentCell = document.createElement('div');
+            const maxCell = document.createElement('div');
+            currentCell.className = 'cell';
+            maxCell.className = 'cell';
+            currentCell.textContent = value;
+            maxCell.textContent = value;
+
+            // Blue: Current subarray being processed
+            if (index >= start && index < end) {
+                currentCell.classList.add('blue');
+            }
+
+            // Green: Best max-sum subarray found so far
+            if (index >= bestStart && index <= bestEnd) {
+                maxCell.classList.add('green');
+            }
+
+            // Bold the current element being processed in both arrays
+            if (index === currentIndex) {
+                currentCell.classList.add('bold');
+                maxCell.classList.add('bold');
+            }
+
+            currentContainer.appendChild(currentCell);
+            maxContainer.appendChild(maxCell);
+        });
+
+        // Update current sum and max sum in the display
+        document.getElementById('currentSumDisplay').textContent = currentSum;
+        document.getElementById('maxSumDisplay').textContent = maxSum;
+    }
+
+    function step() {
+        if (currentIndex >= array.length) {
+            document.getElementById('status').textContent = 'Array fully processed!';
+            return;
+        }
+
+        // Apply the algorithm logic as provided in the Java code
+
+        // Check if the current element alone is better than extending the current subarray
+        if (array[currentIndex] > currentSum + array[currentIndex]) {
+            currentSum = array[currentIndex];
+            start = currentIndex;
+        } else {
+            currentSum += array[currentIndex];
+        }
+
+        // Update the best max-sum subarray seen so far
+        if (currentSum > maxSum) {
+            maxSum = currentSum;
+            bestStart = start;
+            bestEnd = currentIndex;
+        }
+
+        end = currentIndex + 1; // Move to the next element in the array
+        currentIndex++;
+
+        renderArray();
+    }
+
+    function regenerateArray() {
+        const arraySize = parseInt(document.getElementById('arraySize').value);
+        array = generateRandomArray(arraySize);
+        currentIndex = 1; // Start from the second element
+        currentSum = array[0]; // Initialize with the first element
+        maxSum = array[0]; // Initialize max sum with the first element
+        start = 0;
+        end = 1;
+        bestStart = 0;
+        bestEnd = 0;
+        document.getElementById('status').textContent = '';
+        renderArray();
+    }
+
+    // Initialize on page load
+    window.onload = regenerateArray;
+
+</script>
+
+</body>
+</html>
