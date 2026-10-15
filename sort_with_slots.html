@@ -3,74 +3,341 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Number Sorting Game</title>
+    <title>Sort with Slots | LEPL1402</title>
     <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-page: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            
+            --green-slot-bg: #ecfdf5;
+            --green-slot-border: #10b981;
+            --green-slot-color: #065f46;
+
+            --blue-slot-bg: #eff6ff;
+            --blue-slot-border: #3b82f6;
+            --blue-slot-color: #1e40af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 16px 48px;
         }
+
+        .nav-bar {
+            width: 100%;
+            max-width: 960px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+            border-color: #cbd5e1;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 960px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .instructions {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f1f5f9;
+            padding: 10px 16px;
+            border-radius: 8px;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        select {
+            padding: 8px 14px;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #fff;
+            color: var(--text-main);
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        select:focus {
+            border-color: var(--primary);
+        }
+
+        button {
+            padding: 8px 18px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #controls {
+            display: flex;
+            align-items: center;
+        }
+
+        .timer-badge {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #0369a1;
+            background: #e0f2fe;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            display: inline-block;
+        }
+
+        .section-label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-subtext {
+            font-size: 0.8rem;
+            font-weight: normal;
+            color: var(--text-muted);
+        }
+
         #container {
-            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
         }
+
+        .slots-container {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
         .slots {
             display: flex;
             justify-content: center;
-            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+            min-height: 70px;
+            align-items: center;
         }
+
         .slot {
-            width: 50px;
-            height: 50px;
-            border: 2px solid black;
-            margin: 5px;
-            line-height: 50px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
+            width: 60px;
+            height: 60px;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: 700;
             user-select: none;
+            transition: all 0.15s ease;
+            background: #ffffff;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
+
         .green-slot {
-            background-color: lightgreen;
+            background-color: var(--green-slot-bg);
+            border-color: var(--green-slot-border);
+            color: var(--green-slot-color);
         }
+
         .blue-slot {
-            background-color: lightblue;
+            background-color: var(--blue-slot-bg);
+            border-color: var(--blue-slot-border);
+            color: var(--blue-slot-color);
         }
+
+        .blue-slot:empty {
+            background-color: #f1f5f9;
+            border: 2px dashed #94a3b8;
+            position: relative;
+        }
+
+        .blue-slot:empty::after {
+            content: "•";
+            color: #cbd5e1;
+            font-size: 1.5rem;
+        }
+
+        .green-slot:empty {
+            background-color: #f8fafc;
+            border: 2px dashed #cbd5e1;
+        }
+
         .draggable {
             cursor: grab;
         }
-        #controls {
-            margin-top: 20px;
+
+        .draggable:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .dragging {
+            opacity: 0.35;
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+        .drag-over {
+            border: 2px dashed #2563eb !important;
+            background-color: #dbeafe !important;
+            transform: scale(1.08);
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.3);
         }
     </style>
 </head>
 <body>
 
-<h1>Number Sorting Game</h1>
-<div>
-    <label for="numberCount">Select number of items: </label>
-    <select id="numberCount">
-        <option value="4">4</option>
-        <option value="8">8</option>
-        <option value="16">16</option>
-        <option value="20">20</option>
-        <option value="32">32</option>
-    </select>
-    <button id="resetButton">Initialize Numbers</button>
-</div>
+    <div class="nav-bar">
+        <a href="index.html" class="back-link">&larr; Back to Activities</a>
+        <span style="font-size: 0.85rem; color: #94a3b8; font-weight: 500;">LEPL1402</span>
+    </div>
 
-<div id="container">
-    <div id="greenSlots" class="slots"></div>
-    <div id="blueSlots" class="slots"></div>
-</div>
+    <div class="panel">
+        <h1>Number Sorting Game</h1>
+        <div class="instructions">
+            <span>💡</span>
+            <span><strong>How to play:</strong> Drag numbers from the green source slots into the blue slots. Arrange all elements in the blue slots in ascending order.</span>
+        </div>
 
-<div id="controls">
-    <p>Time: <span id="timer">0</span> seconds</p>
-</div>
+        <div class="toolbar">
+            <div class="control-group">
+                <label for="numberCount">Select number of items: </label>
+                <select id="numberCount">
+                    <option value="4">4</option>
+                    <option value="8" selected>8</option>
+                    <option value="16">16</option>
+                    <option value="20">20</option>
+                    <option value="32">32</option>
+                </select>
+                <button id="resetButton">Initialize Numbers</button>
+            </div>
+
+            <div id="controls">
+                <p class="timer-badge">Time: <span id="timer">0</span> seconds</p>
+            </div>
+        </div>
+
+        <div id="container">
+            <div class="slots-container">
+                <div class="section-label">
+                    <span>Source Slots (Original Pile)</span>
+                    <span class="section-subtext">Drag from here</span>
+                </div>
+                <div id="greenSlots" class="slots"></div>
+            </div>
+
+            <div class="slots-container">
+                <div class="section-label">
+                    <span>Target Slots (Auxiliary Array)</span>
+                    <span class="section-subtext">Fill in ascending order (&larr; Smallest to Largest &rarr;)</span>
+                </div>
+                <div id="blueSlots" class="slots"></div>
+            </div>
+        </div>
+    </div>
 
 <script>
     let timerInterval;
     let startTime;
 
     document.getElementById('resetButton').addEventListener('click', initializeGame);
+    document.getElementById('numberCount').addEventListener('change', initializeGame);
 
     function initializeGame() {
         const count = parseInt(document.getElementById('numberCount').value);
@@ -117,7 +384,9 @@
 
         // Drag events
         slot.addEventListener('dragstart', dragStart);
+        slot.addEventListener('dragend', dragEnd);
         slot.addEventListener('dragover', dragOver);
+        slot.addEventListener('dragleave', dragLeave);
         slot.addEventListener('drop', drop);
 
         return slot;
@@ -128,45 +397,56 @@
         e.target.classList.add('dragging');
     }
 
+    function dragEnd(e) {
+        e.target.classList.remove('dragging');
+        document.querySelectorAll('.slot').forEach(el => el.classList.remove('drag-over'));
+    }
+
     function dragOver(e) {
         e.preventDefault();
-        e.target.classList.add('drag-over');
+        e.currentTarget.classList.add('drag-over');
+    }
+
+    function dragLeave(e) {
+        e.currentTarget.classList.remove('drag-over');
     }
 
     function drop(e) {
         e.preventDefault();
+        e.currentTarget.classList.remove('drag-over');
         const draggedNumber = e.dataTransfer.getData('text/plain');
-        const targetNumber = e.target.textContent;
+        const targetSlot = e.currentTarget;
+        const targetNumber = targetSlot.textContent;
 
-        if (draggedNumber && e.target.classList.contains('slot')) {
+        if (draggedNumber && targetSlot.classList.contains('slot')) {
             // Swap numbers between the slots
-            e.target.textContent = draggedNumber;
+            targetSlot.textContent = draggedNumber;
             const draggedElement = document.querySelector('.dragging');
-            draggedElement.textContent = targetNumber;
+            if (draggedElement) {
+                draggedElement.textContent = targetNumber;
 
-            // Update draggable attributes
-            if (e.target.textContent === '') {
-                e.target.removeAttribute('draggable');
-                e.target.classList.remove('draggable');
-            } else {
-                e.target.setAttribute('draggable', true);
-                e.target.classList.add('draggable');
+                if (draggedElement.textContent === '') {
+                    draggedElement.removeAttribute('draggable');
+                    draggedElement.classList.remove('draggable');
+                } else {
+                    draggedElement.setAttribute('draggable', true);
+                    draggedElement.classList.add('draggable');
+                }
+                draggedElement.classList.remove('dragging');
             }
 
-            if (draggedElement.textContent === '') {
-                draggedElement.removeAttribute('draggable');
-                draggedElement.classList.remove('draggable');
+            // Update draggable attributes for target
+            if (targetSlot.textContent === '') {
+                targetSlot.removeAttribute('draggable');
+                targetSlot.classList.remove('draggable');
             } else {
-                draggedElement.setAttribute('draggable', true);
-                draggedElement.classList.add('draggable');
+                targetSlot.setAttribute('draggable', true);
+                targetSlot.classList.add('draggable');
             }
 
             // Check if sorted in blue slots
             checkIfSorted();
         }
-
-        e.target.classList.remove('drag-over');
-        document.querySelector('.dragging').classList.remove('dragging');
     }
 
     function checkIfSorted() {
@@ -181,7 +461,9 @@
         // Check if the numbers are sorted in ascending order
         if (numbers.every((num, i) => i === 0 || num >= numbers[i - 1])) {
             clearInterval(timerInterval);
-            alert('Congratulations! The numbers in the blue slots are sorted.');
+            setTimeout(() => {
+                alert('Congratulations! The numbers in the blue slots are sorted.');
+            }, 50);
         }
     }
 
@@ -193,6 +475,9 @@
             document.getElementById('timer').textContent = elapsed;
         }, 1000);
     }
+
+    // Initialize game on page load
+    initializeGame();
 </script>
 
 </body>

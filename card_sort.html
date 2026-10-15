@@ -3,59 +3,321 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Number Sorting Game</title>
+    <title>Sort Pile with Swaps and Pops | LEPL1402</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 20px;
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-page: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --card-border: #cbd5e1;
         }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 16px 48px;
+        }
+
+        .nav-bar {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+            border-color: #cbd5e1;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 900px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .instructions {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f1f5f9;
+            padding: 10px 16px;
+            border-radius: 8px;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        select {
+            padding: 8px 14px;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #fff;
+            color: var(--text-main);
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        select:focus {
+            border-color: var(--primary);
+        }
+
+        button {
+            padding: 8px 18px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .action-button {
+            padding: 12px 24px;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-swap {
+            background-color: #2563eb;
+        }
+
+        .btn-swap:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-rotate {
+            background-color: #0d9488;
+        }
+
+        .btn-rotate:hover {
+            background-color: #0f766e;
+        }
+
+        .stats-badge {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #0369a1;
+            background: #e0f2fe;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            display: inline-block;
+        }
+
+        .pile-area {
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 24px 16px 20px;
+            margin-bottom: 24px;
+        }
+
+        .position-guide {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+            padding: 0 8px;
+        }
+
         .container {
             display: flex;
             justify-content: center;
-            margin-top: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            min-height: 80px;
         }
+
+        .cell-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .cell-tag {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+        }
+
         .cell {
-            width: 40px;
-            height: 40px;
-            display: inline-block;
-            border: 1px solid black;
-            margin: 5px;
-            line-height: 40px;
-            text-align: center;
-            font-size: 18px;
+            width: 56px;
+            height: 64px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid var(--card-border);
+            border-radius: 10px;
+            background: #ffffff;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #1e293b;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        button {
-            margin: 10px;
+
+        .first-two {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+            color: #1e40af;
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.2);
+        }
+
+        .action-container {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .time-display {
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
-<h1>Number Sorting Game</h1>
+    <div class="nav-bar">
+        <a href="index.html" class="back-link">&larr; Back to Activities</a>
+        <span style="font-size: 0.85rem; color: #94a3b8; font-weight: 500;">LEPL1402</span>
+    </div>
 
-<div>
-    <label for="numberCount">Select number of items: </label>
-    <select id="numberCount">
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-        <option value="7">7</option>
-        <option value="8">8</option>
-        <option value="9">9</option>
-        <option value="10">10</option>
-    </select>
-    <button onclick="resetGame()">Reset</button>
-</div>
+    <div class="panel">
+        <h1>Number Sorting Game</h1>
+        <div class="instructions">
+            <span>💡</span>
+            <span><strong>Rules:</strong> Sort the pile into ascending order (1, 2, 3...) using only two allowed actions: swap the first two elements, or shift the top element all the way to the end.</span>
+        </div>
 
-<div class="container" id="numberContainer"></div>
+        <div class="toolbar">
+            <div class="control-group">
+                <label for="numberCount">Select number of items: </label>
+                <select id="numberCount">
+                    <option value="4">4</option>
+                    <option value="5" selected>5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+                <button onclick="resetGame()">Reset</button>
+            </div>
 
-<div>
-    <button onclick="swap()">Swap First Two</button>
-    <button onclick="moveTopToEnd()">Move Top to End</button>
-</div>
+            <div class="time-display">
+                <span class="stats-badge">Time: <span id="timer">0</span> seconds</span>
+            </div>
+        </div>
 
-<p>Time: <span id="timer">0</span> seconds</p>
+        <div class="pile-area">
+            <div class="position-guide">
+                <span>&larr; Front / Top (Affected by Swap)</span>
+                <span>End / Bottom &rarr;</span>
+            </div>
+            <div class="container" id="numberContainer"></div>
+        </div>
+
+        <div class="action-container">
+            <button class="action-button btn-swap" onclick="swap()">
+                <span>↔️ Swap First Two</span>
+            </button>
+            <button class="action-button btn-rotate" onclick="moveTopToEnd()">
+                <span>↻ Move Top to End</span>
+            </button>
+        </div>
+    </div>
 
 <script>
     let numbers = [];
@@ -80,11 +342,26 @@
     function renderNumbers() {
         const container = document.getElementById('numberContainer');
         container.innerHTML = '';
-        numbers.forEach(number => {
+        numbers.forEach((number, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'cell-wrapper';
+
+            const tag = document.createElement('span');
+            tag.className = 'cell-tag';
+            if (index === 0) tag.textContent = '1st';
+            else if (index === 1) tag.textContent = '2nd';
+            else tag.textContent = `#${index + 1}`;
+
             const cell = document.createElement('div');
             cell.className = 'cell';
+            if (index < 2) {
+                cell.classList.add('first-two');
+            }
             cell.textContent = number;
-            container.appendChild(cell);
+
+            wrapper.appendChild(tag);
+            wrapper.appendChild(cell);
+            container.appendChild(wrapper);
         });
         checkIfSorted();
     }
@@ -109,7 +386,9 @@
         const sorted = numbers.every((val, index, arr) => index === 0 || arr[index - 1] <= val);
         if (sorted) {
             clearInterval(timerInterval);
-            alert('Congratulations! The numbers are sorted.');
+            setTimeout(() => {
+                alert('Congratulations! The numbers are sorted.');
+            }, 50);
         }
     }
 

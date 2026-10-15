@@ -3,57 +3,331 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Number Finding Game</title>
+    <title>Number Finding Game | LEPL1402</title>
     <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-page: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --card-hidden-bg: #e2e8f0;
+            --card-hidden-border: #cbd5e1;
+            --card-revealed-bg: #f8fafc;
+            --card-revealed-border: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 16px 48px;
+        }
+
+        .nav-bar {
+            width: 100%;
+            max-width: 960px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+            border-color: #cbd5e1;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 960px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .instructions {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f1f5f9;
+            padding: 10px 16px;
+            border-radius: 8px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        #target-message {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        select {
+            padding: 8px 14px;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #fff;
+            color: var(--text-main);
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        select:focus {
+            border-color: var(--primary);
+        }
+
+        button {
+            padding: 8px 18px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .array-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+            padding: 0 4px;
+        }
+
         #number-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
+            justify-content: center;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            max-height: 480px;
+            overflow-y: auto;
         }
+
         .number-box {
-            width: 60px;
-            height: 60px;
-            background-color: lightgray;
+            min-width: 58px;
+            height: 58px;
+            padding: 4px;
+            background-color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 16px;
-            border: 2px solid darkgray;
+            font-size: 1rem;
+            font-weight: 700;
+            border: 2px solid #94a3b8;
+            border-radius: 8px;
             cursor: pointer;
             user-select: none;
+            transition: all 0.15s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
+
+        .number-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
         .hidden {
-            background-color: lightblue;
-            color: transparent;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-color: #93c5fd;
+            color: transparent !important;
+            position: relative;
         }
-        button, select {
-            margin-top: 20px;
+
+        .hidden::after {
+            content: "?";
+            position: absolute;
+            color: #3b82f6;
+            font-size: 1.2rem;
+            font-weight: 800;
         }
-        #target-message {
-            margin-top: 20px;
+
+        .hidden:hover {
+            background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+            border-color: #60a5fa;
+        }
+
+        .revealed-target {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #15803d !important;
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.4) !important;
+        }
+
+        .revealed-less {
+            background-color: #f1f5f9;
+            color: #64748b;
+            border-color: #cbd5e1;
         }
     </style>
 </head>
 <body>
 
-<h1>Find the Hidden Number</h1>
+    <div class="nav-bar">
+        <a href="index.html" class="back-link">&larr; Back to Activities</a>
+        <span style="font-size: 0.85rem; color: #94a3b8; font-weight: 500;">LEPL1402</span>
+    </div>
 
-<label for="number-count">Select size of series: </label>
-<select id="number-count">
-    <option value="2">2</option>
-    <option value="4">4</option>
-    <option value="8">8</option>
-    <option value="16">16</option>
-    <option value="32">32</option>
-    <option value="128">128</option>
-    <option value="256">256</option>
-</select>
+    <div class="panel">
+        <h1>Find the Hidden Number</h1>
+        <div class="instructions">
+            <span>💡</span>
+            <span><strong>Binary Search Challenge:</strong> The cards are sorted from left to right. Click a box to reveal its value and narrow down the range in as few clicks as possible!</span>
+        </div>
 
-<div id="number-container"></div>
+        <div class="dashboard">
+            <div class="stat-card">
+                <div class="stat-label">Target Number</div>
+                <p id="target-message">Find the number: -</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Clicks Used</div>
+                <div class="stat-value" id="click-counter">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Theoretical Best</div>
+                <div class="stat-value" id="optimal-clicks" style="color: #10b981;">-</div>
+            </div>
+        </div>
 
-<p id="target-message"></p>
-<p>Click counter: <span id="click-counter">0</span></p>
-<button onclick="resetGame()">Reset</button>
+        <div class="toolbar">
+            <div class="control-group">
+                <label for="number-count">Series Size: </label>
+                <select id="number-count" onchange="resetGame()">
+                    <option value="2">2</option>
+                    <option value="4">4</option>
+                    <option value="8" selected>8</option>
+                    <option value="16">16</option>
+                    <option value="32">32</option>
+                    <option value="128">128</option>
+                    <option value="256">256</option>
+                </select>
+                <button onclick="resetGame()">Reset</button>
+            </div>
+        </div>
+
+        <div class="array-meta">
+            <span>&larr; Smallest (Index 0)</span>
+            <span>Sorted Values Range [0 - 1000]</span>
+            <span>Largest &rarr;</span>
+        </div>
+
+        <div id="number-container"></div>
+    </div>
 
 <script>
     let numbers = [];
@@ -86,6 +360,10 @@
     }
 
     function revealNumber(e) {
+        if (!e.target.classList.contains('hidden')) {
+            return; // Already revealed
+        }
+
         const clickedIndex = e.target.getAttribute('data-index');
         const clickedNumber = numbers[clickedIndex];
         
@@ -93,13 +371,22 @@
         e.target.classList.remove('hidden');
         e.target.textContent = clickedNumber;
 
+        // Visual distinction
+        if (clickedNumber === targetNumber) {
+            e.target.classList.add('revealed-target');
+        } else {
+            e.target.classList.add('revealed-less');
+        }
+
         // Increment the click counter
         clickCounter++;
         document.getElementById('click-counter').textContent = clickCounter;
 
         // Check if the clicked number is the target number
         if (clickedNumber == targetNumber) {
-            alert(`Congratulations! You found the number ${targetNumber} in ${clickCounter} clicks.`);
+            setTimeout(() => {
+                alert(`Congratulations! You found the number ${targetNumber} in ${clickCounter} clicks.`);
+            }, 50);
         }
     }
 
@@ -109,6 +396,13 @@
 
         const count = parseInt(document.getElementById('number-count').value, 10);
         numbers = getRandomNumbers(count);
+
+        // Calculate and display theoretical best clicks
+        const optimal = Math.ceil(Math.log2(count));
+        const optimalEl = document.getElementById('optimal-clicks');
+        if (optimalEl) {
+            optimalEl.textContent = `≤ ${optimal}`;
+        }
 
         // Pick a random target number from the array
         const targetIndex = Math.floor(Math.random() * count);

@@ -3,45 +3,251 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Algorithm Activities</title>
+    <title>Algorithm Activities | LEPL1402</title>
     <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-page: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --card-bg: #ffffff;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.03);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px 60px;
+        }
+
+        .header {
             text-align: center;
-            background-color: #f0f8ff;
+            max-width: 680px;
+            margin-bottom: 40px;
         }
+
+        .badge {
+            display: inline-block;
+            background-color: #dbeafe;
+            color: #1e40af;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
         h1 {
-            color: #333;
-            margin-top: 50px;
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 10px;
+            letter-spacing: -0.025em;
         }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+
         .container {
-            margin-top: 50px;
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
         }
-        .link {
-            display: block;
-            margin: 20px 0;
-            font-size: 20px;
-            color: #0066cc;
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 24px;
             text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
         }
-        .link:hover {
-            text-decoration: underline;
-            color: #003366;
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: transparent;
+            transition: background 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            border-color: #cbd5e1;
+        }
+
+        .card:hover::before {
+            background: var(--primary);
+        }
+
+        .card-icon {
+            font-size: 2.2rem;
+            margin-bottom: 14px;
+            display: inline-block;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-description {
+            font-size: 0.925rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+            margin-bottom: 18px;
+            flex-grow: 1;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            padding-top: 12px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .card-footer span.action {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: transform 0.2s;
+        }
+
+        .card:hover .card-footer span.action {
+            transform: translateX(4px);
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        footer {
+            margin-top: 50px;
+            color: #94a3b8;
+            font-size: 0.875rem;
         }
     </style>
 </head>
 <body>
 
-    <h1>Algorithm Learning Activities</h1>
+    <header class="header">
+        <span class="badge">LEPL1402 • Data Structures & Algorithms</span>
+        <h1>Interactive Algorithm Labs</h1>
+        <p class="subtitle">Visual, hands-on activities to build algorithmic intuition</p>
+    </header>
 
-    <div class="container">
-    
-        <a class="link" href="sort_with_swaps.html">↔️ Sort with Swaps</a>
-        <a class="link" href="guess.html">🎯 Play the Guessing Game</a>
-        <a class="link" href="sort_with_slots.html">🔄 Sort with Slots</a>
-   	<a class="link" href="card_sort.html">🂦  Sort pile with swaps and pops</a>
-   	<a class="link" href="max_sum.html">Σ  MaxSum subarray</a>
-   </div>
+    <main class="container">
+        <a class="card" href="sort_with_swaps.html">
+            <div>
+                <span class="card-icon">↔️</span>
+                <h2 class="card-title">Sort with Swaps</h2>
+                <p class="card-description">Drag and drop number tiles to swap their positions in place. Practice intuitive sorting strategies like selection and bubble sort.</p>
+            </div>
+            <div class="card-footer">
+                <span class="tag">In-Place Sorting</span>
+                <span class="action">Play &rarr;</span>
+            </div>
+        </a>
+
+        <a class="card" href="guess.html">
+            <div>
+                <span class="card-icon">🎯</span>
+                <h2 class="card-title">Number Guessing Game</h2>
+                <p class="card-description">Search for a hidden target number in a sorted array by uncovering boxes. Discover the efficiency of binary search.</p>
+            </div>
+            <div class="card-footer">
+                <span class="tag">Binary Search</span>
+                <span class="action">Play &rarr;</span>
+            </div>
+        </a>
+
+        <a class="card" href="sort_with_slots.html">
+            <div>
+                <span class="card-icon">🔄</span>
+                <h2 class="card-title">Sort with Slots</h2>
+                <p class="card-description">Move elements from the source pile into designated target slots. Understand auxiliary arrays and out-of-place sorting methods.</p>
+            </div>
+            <div class="card-footer">
+                <span class="tag">Auxiliary Array</span>
+                <span class="action">Play &rarr;</span>
+            </div>
+        </a>
+
+        <a class="card" href="card_sort.html">
+            <div>
+                <span class="card-icon">🂦</span>
+                <h2 class="card-title">Sort with Swaps &amp; Pops</h2>
+                <p class="card-description">Sort a sequence using only two restricted operations: swap the first two elements or rotate the top element to the end.</p>
+            </div>
+            <div class="card-footer">
+                <span class="tag">Queue Permutations</span>
+                <span class="action">Play &rarr;</span>
+            </div>
+        </a>
+
+        <a class="card" href="max_sum.html">
+            <div>
+                <span class="card-icon">Σ</span>
+                <h2 class="card-title">MaxSum Subarray</h2>
+                <p class="card-description">Step-by-step visualization of Kadane's algorithm to compute the contiguous subarray with the maximum sum in linear time.</p>
+            </div>
+            <div class="card-footer">
+                <span class="tag">Dynamic Programming</span>
+                <span class="action">Play &rarr;</span>
+            </div>
+        </a>
+    </main>
+
+    <footer>
+        UCLouvain • LEPL1402 Computer Science
+    </footer>
 
 </body>
 </html>

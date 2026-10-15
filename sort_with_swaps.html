@@ -3,51 +3,279 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drag and Drop Sorting Game</title>
+    <title>Sort with Swaps | LEPL1402</title>
     <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-page: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+            --tile-bg: #eff6ff;
+            --tile-border: #3b82f6;
+            --tile-color: #1e3a8a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 16px 48px;
+        }
+
+        .nav-bar {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+            border-color: #cbd5e1;
+        }
+
+        .card-panel {
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 900px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .instructions {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f1f5f9;
+            padding: 10px 16px;
+            border-radius: 8px;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        select {
+            padding: 8px 14px;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #fff;
+            color: var(--text-main);
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        select:focus {
+            border-color: var(--primary);
+        }
+
+        button {
+            padding: 8px 18px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .stats {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        #timer {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #0369a1;
+            background: #e0f2fe;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            display: inline-block;
+        }
+
+        .sort-guide {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+            padding: 0 6px;
+        }
+
         #number-container {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
+            justify-content: center;
+            padding: 24px 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 2px dashed #cbd5e1;
+            min-height: 110px;
         }
+
         .number-box {
-            width: 50px;
-            height: 50px;
-            background-color: lightblue;
+            min-width: 64px;
+            height: 64px;
+            padding: 0 8px;
+            background-color: var(--tile-bg);
+            color: var(--tile-color);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 16px;
-            border: 2px solid darkblue;
-            cursor: pointer;
+            font-size: 1.15rem;
+            font-weight: 700;
+            border: 2px solid var(--tile-border);
+            border-radius: 10px;
+            cursor: grab;
             user-select: none;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+            transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
         }
-        button {
-            margin-top: 20px;
+
+        .number-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
+            border-color: #2563eb;
         }
-        select {
-            margin-top: 20px;
+
+        .number-box.dragging {
+            opacity: 0.4;
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+        .number-box.drag-over {
+            border: 2px dashed #2563eb;
+            background-color: #dbeafe;
+            transform: scale(1.08);
+            box-shadow: 0 0 12px rgba(37, 99, 235, 0.35);
         }
     </style>
 </head>
 <body>
 
-<h1>Number sorting game (in place)</h1>
+    <div class="nav-bar">
+        <a href="index.html" class="back-link">&larr; Back to Activities</a>
+        <span style="font-size: 0.85rem; color: #94a3b8; font-weight: 500;">LEPL1402</span>
+    </div>
 
-<label for="number-count">Select number of elements: </label>
-<select id="number-count">
-    <option value="4">4</option>
-    <option value="8">8</option>
-     <option value="12">12</option>
-    <option value="16">16</option>
-    <option value="20">20</option>
+    <div class="card-panel">
+        <h1>Number sorting game (in place)</h1>
+        <div class="instructions">
+            <span>💡</span>
+            <span><strong>How to play:</strong> Drag any tile and drop it onto another to swap their values. Reorder the tiles from smallest to largest.</span>
+        </div>
 
-</select>
+        <div class="toolbar">
+            <div class="control-group">
+                <label for="number-count">Elements: </label>
+                <select id="number-count" onchange="resetGame()">
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                    <option value="12">12</option>
+                    <option value="16">16</option>
+                    <option value="20">20</option>
+                </select>
+                <button onclick="resetGame()">Reset</button>
+            </div>
 
-<div id="number-container"></div>
+            <div class="stats">
+                <p id="timer">Time: 0s</p>
+            </div>
+        </div>
 
-<button onclick="resetGame()">Reset</button>
-<p id="timer">Time: 0s</p>
+        <div class="sort-guide">
+            <span>&larr; Smallest</span>
+            <span>Ascending Order &rarr;</span>
+            <span>Largest &rarr;</span>
+        </div>
+
+        <div id="number-container"></div>
+    </div>
 
 <script>
     let numbers = [];
@@ -75,7 +303,9 @@
             div.setAttribute('draggable', 'true');
             div.setAttribute('data-index', index);
             div.addEventListener('dragstart', handleDragStart);
+            div.addEventListener('dragend', handleDragEnd);
             div.addEventListener('dragover', handleDragOver);
+            div.addEventListener('dragleave', handleDragLeave);
             div.addEventListener('drop', handleDrop);
             container.appendChild(div);
         });
@@ -83,17 +313,30 @@
 
     function handleDragStart(e) {
         e.dataTransfer.setData('text/plain', e.target.getAttribute('data-index'));
+        e.target.classList.add('dragging');
+    }
+
+    function handleDragEnd(e) {
+        e.target.classList.remove('dragging');
+        document.querySelectorAll('.number-box').forEach(el => el.classList.remove('drag-over'));
     }
 
     function handleDragOver(e) {
         e.preventDefault();
+        e.currentTarget.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+        e.currentTarget.classList.remove('drag-over');
     }
 
     function handleDrop(e) {
+        e.preventDefault();
+        e.currentTarget.classList.remove('drag-over');
         const fromIndex = e.dataTransfer.getData('text/plain');
-        const toIndex = e.target.getAttribute('data-index');
+        const toIndex = e.currentTarget.getAttribute('data-index');
 
-        if (fromIndex !== toIndex) {
+        if (fromIndex !== null && toIndex !== null && fromIndex !== toIndex) {
             swapNumbers(fromIndex, toIndex);
             initializeNumbers();
             checkIfSorted();
@@ -109,7 +352,9 @@
     function checkIfSorted() {
         if (numbers.every((num, i, arr) => !i || arr[i - 1] <= num)) {
             clearInterval(timerInterval);
-            alert(`Congratulations! You sorted the numbers in ${(Date.now() - startTime) / 1000} seconds.`);
+            setTimeout(() => {
+                alert(`Congratulations! You sorted the numbers in ${(Date.now() - startTime) / 1000} seconds.`);
+            }, 50);
         }
     }
 

@@ -3,86 +3,424 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maximum Sum Subarray Visualization</title>
+    <title>MaxSum Subarray Visualization | LEPL1402</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 20px;
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-page: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
         }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 16px 48px;
+        }
+
+        .nav-bar {
+            width: 100%;
+            max-width: 960px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+            border-color: #cbd5e1;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 960px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .instructions {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f1f5f9;
+            padding: 10px 16px;
+            border-radius: 8px;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        select {
+            padding: 8px 14px;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #fff;
+            color: var(--text-main);
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        select:focus {
+            border-color: var(--primary);
+        }
+
+        button {
+            padding: 8px 18px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .metric-card {
+            border-radius: 12px;
+            padding: 16px 20px;
+            border: 1px solid;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .metric-current {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+        }
+
+        .metric-max {
+            background: #ecfdf5;
+            border-color: #a7f3d0;
+        }
+
+        .metric-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-current .metric-title {
+            color: #1d4ed8;
+        }
+
+        .metric-max .metric-title {
+            color: #047857;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        .metric-current .metric-value {
+            color: #1e40af;
+        }
+
+        .metric-max .metric-value {
+            color: #065f46;
+        }
+
+        .section-box {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        h3.title-blue {
+            color: #1d4ed8;
+        }
+
+        h3.title-green {
+            color: #047857;
+        }
+
         .array-container {
             display: flex;
             justify-content: center;
-            margin: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 10px 0;
+            min-height: 60px;
         }
+
         .cell {
-            width: 40px;
-            height: 40px;
-            border: 1px solid black;
-            margin: 2px;
-            line-height: 40px;
+            width: 48px;
+            height: 48px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #334155;
+            user-select: none;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        }
+
+        .cell.blue {
+            background-color: #dbeafe;
+            border: 2px solid #2563eb;
+            color: #1e3a8a;
+            font-weight: 700;
+        }
+
+        .cell.green {
+            background-color: #d1fae5;
+            border: 2px solid #10b981;
+            color: #065f46;
+            font-weight: 700;
+        }
+
+        .cell.bold {
+            box-shadow: 0 0 0 3px #f59e0b, 0 4px 6px rgba(245, 158, 11, 0.2);
+            transform: scale(1.12);
+            z-index: 2;
+        }
+
+        .controls-action {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            margin: 24px 0 12px;
+        }
+
+        .btn-step {
+            padding: 12px 28px;
+            font-size: 1.05rem;
+            background-color: #2563eb;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #status {
             text-align: center;
-            font-size: 16px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            min-height: 24px;
+            color: #059669;
         }
-        .green {
-            background-color: lightgreen;
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 12px;
+            flex-wrap: wrap;
         }
-        .blue {
-            background-color: lightblue;
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .bold {
-            font-weight: bold;
-        }
-        button {
-            margin: 10px;
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
         }
     </style>
 </head>
 <body>
 
-<h1>Maximum Sum Subarray Visualization</h1>
+    <div class="nav-bar">
+        <a href="index.html" class="back-link">&larr; Back to Activities</a>
+        <span style="font-size: 0.85rem; color: #94a3b8; font-weight: 500;">LEPL1402</span>
+    </div>
 
-<div>
-    <label for="arraySize">Array Size: </label>
-    <select id="arraySize">
-        <!-- Dropdown options from 4 to 20 -->
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-        <option value="7">7</option>
-        <option value="8">8</option>
-        <option value="9">9</option>
-        <option value="10">10</option>
-        <option value="11">11</option>
-        <option value="12">12</option>
-        <option value="13">13</option>
-        <option value="14">14</option>
-        <option value="15">15</option>
-        <option value="16">16</option>
-        <option value="17">17</option>
-        <option value="18">18</option>
-        <option value="19">19</option>
-        <option value="20">20</option>
-    </select>
-    <button onclick="regenerateArray()">Regenerate</button>
-</div>
+    <div class="panel">
+        <h1>Maximum Sum Subarray Visualization</h1>
+        <div class="instructions">
+            <span>💡</span>
+            <span><strong>Kadane's Algorithm:</strong> Walk through the array element by element. At each step, decide whether to append the current element to the existing contiguous subarray or start fresh from it.</span>
+        </div>
 
-<h3>Current Subarray (in blue)</h3>
-<div class="array-container" id="currentArrayContainer"></div>
+        <div class="toolbar">
+            <div class="control-group">
+                <label for="arraySize">Array Size: </label>
+                <select id="arraySize" onchange="regenerateArray()">
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8" selected>8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                </select>
+                <button onclick="regenerateArray()">Regenerate</button>
+            </div>
 
-<h3>Max Sum Subarray (in green)</h3>
-<div class="array-container" id="maxArrayContainer"></div>
+            <div class="legend">
+                <div class="legend-item">
+                    <span class="legend-dot" style="background:#dbeafe; border:1px solid #2563eb;"></span>
+                    <span>Current Subarray</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot" style="background:#d1fae5; border:1px solid #10b981;"></span>
+                    <span>Best Subarray</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot" style="border:2px solid #f59e0b;"></span>
+                    <span>Current Focus Element</span>
+                </div>
+            </div>
+        </div>
 
-<div>
-    <p>Current Sum: <span id="currentSumDisplay">0</span></p>
-    <p>Max Sum: <span id="maxSumDisplay">0</span></p>
-</div>
+        <div class="metrics-row">
+            <div class="metric-card metric-current">
+                <div>
+                    <div class="metric-title">Current Sum</div>
+                    <span style="font-size: 0.75rem; color: #64748b;">Subarray ending at focus</span>
+                </div>
+                <div class="metric-value" id="currentSumDisplay">0</div>
+            </div>
+            <div class="metric-card metric-max">
+                <div>
+                    <div class="metric-title">Max Sum</div>
+                    <span style="font-size: 0.75rem; color: #64748b;">Global best so far</span>
+                </div>
+                <div class="metric-value" id="maxSumDisplay">0</div>
+            </div>
+        </div>
 
-<div>
-    <button onclick="step()">Step</button>
-</div>
+        <div class="section-box">
+            <h3 class="title-blue">
+                <span>Current Subarray (in blue)</span>
+            </h3>
+            <div class="array-container" id="currentArrayContainer"></div>
+        </div>
 
-<p id="status"></p>
+        <div class="section-box">
+            <h3 class="title-green">
+                <span>Max Sum Subarray (in green)</span>
+            </h3>
+            <div class="array-container" id="maxArrayContainer"></div>
+        </div>
+
+        <div class="controls-action">
+            <button class="btn-step" onclick="step()">
+                <span>Step Forward &rarr;</span>
+            </button>
+        </div>
+
+        <p id="status"></p>
+    </div>
 
 <script>
     let array = [];
@@ -139,7 +477,7 @@
 
     function step() {
         if (currentIndex >= array.length) {
-            document.getElementById('status').textContent = 'Array fully processed!';
+            document.getElementById('status').textContent = '✅ Array fully processed!';
             return;
         }
 
